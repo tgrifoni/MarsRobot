@@ -11,7 +11,7 @@ namespace MarsRobot.Domain.Tests.Commands.Move
 {
     public class MoveCommandHandlerTests
     {
-        private readonly Mock<IMoveValidator> _moveValidatorMock = new Mock<IMoveValidator>();
+        private readonly Mock<IMoveValidator> _moveValidatorMock = new();
         private readonly MoveCommandHandler _moveCommandHandler;
 
         public MoveCommandHandlerTests()

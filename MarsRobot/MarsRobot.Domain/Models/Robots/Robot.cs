@@ -1,9 +1,9 @@
-﻿using MarsRobot.Domain.Commands.Move;
-using MarsRobot.Domain.Commands.Turn;
-using MarsRobot.Domain.Contracts.Robots;
+﻿using MarsRobot.Domain.Contracts.Robots;
+using MarsRobot.Domain.Contracts.Strategies;
 using MarsRobot.Domain.Contracts.ValueObjects;
 using MarsRobot.Domain.Models.Enums;
 using MarsRobot.Domain.Models.ValueObjects;
+using MarsRobot.Domain.Strategies;
 using MediatR;
 using System.Threading.Tasks;
 
@@ -13,37 +13,33 @@ namespace MarsRobot.Domain.Models.Robots
     {
         private readonly IMediator _mediator;
 
-        public IPoint Position { get; private set; } = Point.InitialPosition;
-        public Direction Direction { get; private set; } = Direction.North;
-
         public Robot(IMediator mediator)
         {
             _mediator = mediator;
         }
 
+        public IPoint Position { get; private set; } = Point.InitialPosition;
+        public Direction Direction { get; private set; } = Direction.North;
+
         public async Task Navigate(string commands)
         {
             foreach (Command command in commands)
             {
-                switch (command)
-                {
-                    case Command.MoveForward:
-                        var moveCommand = new MoveForwardCommand { CurrentPosition = Position, Direction = Direction };
-                        var moveResult = await _mediator.Send(moveCommand);
-                        Position = moveResult.NewPosition;
-                        break;
-                    case Command.TurnLeft:
-                        var turnLeftCommand = new TurnLeftCommand { CurrentDirection = Direction };
-                        var turnLeftResult = await _mediator.Send(turnLeftCommand);
-                        Direction = turnLeftResult.NewDirection;
-                        break;
-                    case Command.TurnRight:
-                        var turnRightCommand = new TurnRightCommand { CurrentDirection = Direction };
-                        var turnRightResult = await _mediator.Send(turnRightCommand);
-                        Direction = turnRightResult.NewDirection;
-                        break;
-                }
+                var movementStrategy = GetMovementStrategyForCommand(command);
+                var result = await movementStrategy.PerformAction(Position, Direction);
+
+                Position = result.Position;
+                Direction = result.Direction;
             }
         }
-    }
+
+        private IMovementStrategy GetMovementStrategyForCommand(Command command) =>
+            command switch
+            {
+                Command.MoveForward => new MoveForwardStrategy(_mediator),
+                Command.TurnLeft => new TurnLeftStrategy(_mediator),
+                Command.TurnRight => new TurnRightStrategy(_mediator),
+                _ => new NotImplementedStrategy()
+            };
+}
 }

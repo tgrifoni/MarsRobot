@@ -14,8 +14,8 @@ namespace MarsRobot.Domain.Tests.Models.Robots
 {
     public class RobotTests
     {
+        private readonly Mock<IMediator> _mediatorMock = new();
         private readonly IRobot _robot;
-        private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
 
         public RobotTests()
         {

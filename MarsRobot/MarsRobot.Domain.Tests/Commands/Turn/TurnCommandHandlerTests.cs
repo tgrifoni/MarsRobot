@@ -9,7 +9,7 @@ namespace MarsRobot.Domain.Tests.Commands
 {
     public class TurnCommandHandlerTests
     {
-        private readonly TurnCommandHandler _turnCommandHandler = new TurnCommandHandler();
+        private readonly TurnCommandHandler _turnCommandHandler = new();
 
         [Theory]
         [InlineData(Direction.North, Direction.East)]

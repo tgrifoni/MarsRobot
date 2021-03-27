@@ -9,7 +9,7 @@ namespace MarsRobot.Domain.Tests.Validators
 {
     public class MoveValidatorTests
     {
-        private readonly Mock<IPoint> _plateauMock = new Mock<IPoint>();
+        private readonly Mock<IPoint> _plateauMock = new();
         private readonly IMoveValidator _moveValidator;
 
         public MoveValidatorTests()
