@@ -17,6 +17,7 @@ namespace MarsRobot.ConsoleApp
                 .ConfigureServices(services => services
                     .AddTransient<IRobot, Robot>()
                     .AddTransient<IMoveValidator, MoveValidator>(provider => ActivatorUtilities.CreateInstance<MoveValidator>(provider, plateau))
+                    .AddStrategies()
                     .AddMediatR(typeof(MoveForwardCommand)));
     }
 }

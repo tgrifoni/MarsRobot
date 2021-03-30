@@ -11,6 +11,7 @@ namespace MarsRobot.Domain.Tests.Integration
     public class IntegrationTests
     {
         [Theory]
+        [InlineData(1, 1, "A", 1, 1, Direction.North)]
         [InlineData(5, 5, "FFRFLFLF", 1, 4, Direction.West)]
         [InlineData(5, 5, "FFRFLFLFF", 1, 4, Direction.West)]
         [InlineData(1, 4, "FFRFLFLFL", 1, 4, Direction.South)]

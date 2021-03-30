@@ -3,19 +3,18 @@ using MarsRobot.Domain.Contracts.Strategies;
 using MarsRobot.Domain.Contracts.ValueObjects;
 using MarsRobot.Domain.Models.Enums;
 using MarsRobot.Domain.Models.ValueObjects;
-using MarsRobot.Domain.Strategies;
-using MediatR;
+using System;
 using System.Threading.Tasks;
 
 namespace MarsRobot.Domain.Models.Robots
 {
     public class Robot : IRobot
     {
-        private readonly IMediator _mediator;
+        private readonly Func<Command, IMovementStrategy> _strategyResolver;
 
-        public Robot(IMediator mediator)
+        public Robot(Func<Command, IMovementStrategy> strategyResolver)
         {
-            _mediator = mediator;
+            _strategyResolver = strategyResolver;
         }
 
         public IPoint Position { get; private set; } = Point.InitialPosition;
@@ -25,21 +24,12 @@ namespace MarsRobot.Domain.Models.Robots
         {
             foreach (Command command in commands)
             {
-                var movementStrategy = GetMovementStrategyForCommand(command);
+                var movementStrategy = _strategyResolver(command);
                 var result = await movementStrategy.PerformAction(Position, Direction);
 
                 Position = result.Position;
                 Direction = result.Direction;
             }
         }
-
-        private IMovementStrategy GetMovementStrategyForCommand(Command command) =>
-            command switch
-            {
-                Command.MoveForward => new MoveForwardStrategy(_mediator),
-                Command.TurnLeft => new TurnLeftStrategy(_mediator),
-                Command.TurnRight => new TurnRightStrategy(_mediator),
-                _ => new NotImplementedStrategy()
-            };
-}
+    }
 }

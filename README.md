@@ -11,7 +11,7 @@ The second input line will be a string containing multiple commands as described
 ```bash
 L: Turn the robot left
 R: Turn the robot right
-F: Move forward on it's facing direction
+F: Move forward on its facing direction
 ```
  
 ```bash
